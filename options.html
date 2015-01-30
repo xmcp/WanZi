@@ -1,10 +1,38 @@
 <!DOCTYPE html>
-<html>
-<head lang="en">
+<html lang="zh">
+<head>
   <meta charset="UTF-8">
-  <title></title>
+  <link href="libs/css/bootstrap.min.css" rel="stylesheet">
+  <title>丸子</title>
+  <style>
+    .up7px {margin-top: -7px;}
+  </style>
 </head>
-<body>
-
-</body>
+<body style="background-color: #EEE;"><div class="container">
+  <div class="page-header">
+    <h1>丸子&nbsp;<small>专业破解人大附中网站过滤系统</small></h1>
+  </div>
+  <div class="panel panel-default">
+    <div class="panel-heading">
+      <button class="btn btn-link pull-right" style="margin-top: -8px;" id="clearbtn">全部清除</button>
+      <h3 class="panel-title">将丸子用于以下受限网站</h3>
+    </div>
+    <div class="panel-body">
+      <div id="li"></div>
+      <div class="input-group">
+        <span class="input-group-addon">手动添加域名</span>
+        <input type="text" class="form-control" placeholder="域名" id="addtxt">
+        <span class="input-group-btn">
+          <button class="btn btn-primary" type="button" id="addbtn">添加</button>
+        </span>
+      </div>
+    </div>
+  </div>
+  <br />
+  <small>
+    &nbsp;&nbsp;Source Code Avaliable at
+    <a href="https://github.com/xmcp/wanzi" target="_blank">GitHub</a>
+  </small>
+  <script src="options.js"></script>
+</div></body>
 </html>

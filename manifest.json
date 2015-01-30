@@ -20,7 +20,6 @@
   },
   "page_action": {
     "default_icon": {"38": "icons/page_icon.png"},
-    "default_title": "丸子大法好",
-    "default_popup": "popup.html"
+    "default_title": "丸子大法好"
   }
 }

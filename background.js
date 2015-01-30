@@ -1,8 +1,7 @@
 chrome.runtime.onInstalled.addListener(
   function(details) {
     if(details.reason==="install") {
-      localStorage["collect"]=true;
-      localStorage["black"]="*://*.4399.com/*,*://*.qq.com/*";
+      localStorage["black"]="";
       window.open(chrome.extension.getURL('options.html'));
     }
   }
@@ -38,32 +37,33 @@ function download_callback(details) {
       for(var noww=0;noww<blacked.length;noww++)
         if(blacked[noww]===url)
           return;
+      alert("已经将丸子用于 "+ a.hostname);
       if(localStorage["black"]==="")
         localStorage["black"]=url;
       else
         localStorage["black"]+=","+url;
       rebind();
+      chrome.tabs.reload(details.tabId,{bypassCache:true});
     }
   }
 }
 
-function bindreq() {
+function bindup() {
   blacked=localStorage["black"].split(",");
   if(blacked.length==1 && blacked[0]==="")
     blacked=[];
   chrome.webRequest.onBeforeSendHeaders.addListener(
     upload_callback,{urls: blacked},["blocking","requestHeaders"]
   );
-  chrome.webRequest.onCompleted.addListener(
-    download_callback,{types: ["main_frame","sub_frame"],urls: ["*://*/*"]},["responseHeaders"]
-  );
 }
-
 function rebind() {
   chrome.webRequest.onBeforeSendHeaders.removeListener(
     upload_callback,{urls:blacked},["blocking","requestHeaders"]
   );
-  bindreq();
+  bindup();
 }
 
-bindreq();
+chrome.webRequest.onCompleted.addListener(
+  download_callback,{types: ["main_frame","sub_frame"],urls: ["*://*/*"]},["responseHeaders"]
+);
+bindup();
