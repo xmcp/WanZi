@@ -1,7 +1,7 @@
 chrome.runtime.onInstalled.addListener(
   function(details) {
     if(details.reason==="install") {
-      localStorage["black"]="";
+      localStorage["black"]=[""];
       window.open(chrome.extension.getURL('options.html'));
     }
   }
@@ -15,6 +15,7 @@ function push(details) {
 
 function upload_callback(details) {
   push(details);
+  //console.debug(details);////////////////////////////////////////////
   for(var now=0;now<details.requestHeaders.length;now++) {
     if(details.requestHeaders[now].name==="Referer") {
       details.requestHeaders[now].value="http://qzone.qq.com";
@@ -27,17 +28,19 @@ function upload_callback(details) {
 
 function download_callback(details) {
   function make_filter(url) {return "*://"+url+"/*";}
-  //console.debug(details);
+  //console.debug(details);///////////////////////////////////////////
   var head=details.responseHeaders;
   for(var now=0;now<head.length;now++) {
-    if(head[now].name==="Server" && head[now].value==="BWS/1.1") {
+    if(head.length===2 && head[0].name==="Content-type" && head[0].value==="text/html" &&
+       head[1].name==="Connection" && head[1].value==="close") {
       var a=document.createElement("a");
       a.href=details.url;
       var url=make_filter(a.hostname);
       for(var noww=0;noww<blacked.length;noww++)
         if(blacked[noww]===url)
           return;
-      alert("已经将丸子用于 "+ a.hostname);
+      if(!confirm("是否将将丸子用于 "+ a.hostname+" ?"))
+        return;
       if(localStorage["black"]==="")
         localStorage["black"]=url;
       else
@@ -50,8 +53,10 @@ function download_callback(details) {
 
 function bindup() {
   blacked=localStorage["black"].split(",");
+  //console.debug(blacked);//////////////////////////////////////////
   if(blacked.length==1 && blacked[0]==="")
     blacked=[];
+  if(blacked.length===0) return;
   chrome.webRequest.onBeforeSendHeaders.addListener(
     upload_callback,{urls: blacked},["blocking","requestHeaders"]
   );
@@ -64,6 +69,6 @@ function rebind() {
 }
 
 chrome.webRequest.onCompleted.addListener(
-  download_callback,{types: ["main_frame","sub_frame"],urls: ["*://*/*"]},["responseHeaders"]
+  download_callback,{types: ["main_frame","sub_frame","script"],urls: ["*://*/*"]},["responseHeaders"]
 );
 bindup();
