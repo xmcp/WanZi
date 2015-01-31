@@ -30,24 +30,22 @@ function download_callback(details) {
   function make_filter(url) {return "*://"+url+"/*";}
   //console.debug(details);///////////////////////////////////////////
   var head=details.responseHeaders;
-  for(var now=0;now<head.length;now++) {
-    if(head.length===2 && head[0].name==="Content-type" && head[0].value==="text/html" &&
-       head[1].name==="Connection" && head[1].value==="close") {
-      var a=document.createElement("a");
-      a.href=details.url;
-      var url=make_filter(a.hostname);
-      for(var noww=0;noww<blacked.length;noww++)
-        if(blacked[noww]===url)
-          return;
-      if(!confirm("是否将将丸子用于 "+ a.hostname+" ?"))
+  if(head.length===2 && head[0].name==="Content-type" && head[0].value==="text/html" &&
+     head[1].name==="Connection" && head[1].value==="close") {
+    var a=document.createElement("a");
+    a.href=details.url;
+    var url=make_filter(a.hostname);
+    for(var noww=0;noww<blacked.length;noww++)
+      if(blacked[noww]===url)
         return;
-      if(localStorage["black"]==="")
-        localStorage["black"]=url;
-      else
-        localStorage["black"]+=","+url;
-      rebind();
-      chrome.tabs.reload(details.tabId,{bypassCache:true});
-    }
+    if(!confirm("是否将将丸子用于 "+ a.hostname+" ?"))
+      return;
+    if(localStorage["black"]==="")
+      localStorage["black"]=url;
+    else
+      localStorage["black"]+=","+url;
+    rebind();
+    chrome.tabs.reload(details.tabId,{bypassCache:true});
   }
 }
 

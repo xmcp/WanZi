@@ -27,6 +27,10 @@ function add() {
   bl.push("*://"+val+"/*");
   refresh();
 }
+function trytoadd(details) {
+  if(details.charCode===13)
+    add();
+}
 function makedel(id) {
   function del() {
     bl.splice(id,1);
@@ -37,6 +41,7 @@ function makedel(id) {
 
 clearbtn.addEventListener('click',clear);
 addbtn.addEventListener('click',add);
+addtxt.addEventListener('keypress',trytoadd);
 document.addEventListener('DOMContentLoaded',function() {
   if(bl.length===0) {
     var hint=document.createElement("div");
