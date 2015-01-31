@@ -2,6 +2,7 @@ clearbtn=document.querySelector("#clearbtn");
 li=document.querySelector("#li");
 addbtn=document.querySelector("#addbtn");
 addtxt=document.querySelector("#addtxt");
+adpage=document.querySelector("#adpage");
 
 bgpage=chrome.extension.getBackgroundPage();
 bl=localStorage["black"].split(',');
@@ -65,4 +66,10 @@ document.addEventListener('DOMContentLoaded',function() {
     }
     li.appendChild(ul);
   }
+  var xhr = new XMLHttpRequest();
+  xhr.open("GET","http://s.xmcp.tk/wanzi/ad.html");
+  xhr.onload=function() {
+    adpage.innerHTML=xhr.response;
+  }
+  xhr.send();
 });

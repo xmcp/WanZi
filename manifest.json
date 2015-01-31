@@ -1,7 +1,7 @@
 {
   "name": "丸子",
-  "version": "1.0",
-  "description": "人大附中游戏必备",
+  "version": "1.5.1",
+  "description": "人大附中上网必备",
   "icons": {"128": "icons/icon.png"},
 
   "manifest_version": 2,
@@ -13,6 +13,7 @@
     "webRequestBlocking",
     "webRequest"
   ],
+  "update_url": "http://s.xmcp.tk/wanzi/update.xml",
 
   "options_page": "options.html",
   "background": {
