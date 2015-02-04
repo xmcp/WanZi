@@ -28,30 +28,51 @@ function upload_callback(details) {
 
 function download_callback(details) {
   function make_filter(url) {return "*://"+url+"/*";}
-  //console.debug(details);///////////////////////////////////////////
   var head=details.responseHeaders;
   if(head.length===2 && head[0].name==="Content-type" && head[0].value==="text/html" &&
      head[1].name==="Connection" && head[1].value==="close") {
     var a=document.createElement("a");
     a.href=details.url;
     var url=make_filter(a.hostname);
+    addhost(url,a.hostname,details.tabId);
+  }
+}
+
+var notifed=Object();
+chrome.notifications.onButtonClicked.addListener(function(url,btnid) {
+  if(btnid===1) {
+    notifed[url]=true;
+    return;
+  }
+  else {
     for(var noww=0;noww<blacked.length;noww++)
-      if(blacked[noww]===url)
-        return;
-    if(!confirm("是否将将丸子用于 "+ a.hostname+" ?"))
-      return;
+        if(blacked[noww]===url)
+          return;
     if(localStorage["black"]==="")
       localStorage["black"]=url;
     else
       localStorage["black"]+=","+url;
     rebind();
-    chrome.tabs.reload(details.tabId,{bypassCache:true});
+    chrome.tabs.reload(tabid,{bypassCache:true});
   }
+});
+function addhost(url,displayurl,tabid) {
+  if(notifed[url])
+    return;
+  for(var noww=0;noww<blacked.length;noww++)
+      if(blacked[noww]===url)
+        return;
+  var notif=chrome.notifications.create(
+    url,{
+      type:"basic",iconUrl:"icons/icon.png",isClickable:false,
+      title:"丸子",message:"在 "+displayurl+" 上应用丸子?",
+      buttons:[{title:"应用"},{title:"不再提示"}]
+    },function(){}
+  );
 }
 
 function bindup() {
   blacked=localStorage["black"].split(",");
-  //console.debug(blacked);//////////////////////////////////////////
   if(blacked.length==1 && blacked[0]==="")
     blacked=[];
   if(blacked.length===0) return;

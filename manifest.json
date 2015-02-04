@@ -1,14 +1,15 @@
 {
   "name": "丸子",
-  "version": "1.5.2",
+  "version": "2.0",
   "description": "人大附中上网必备",
   "icons": {"128": "icons/icon.png"},
 
   "manifest_version": 2,
-  "minimum_chrome_version" : "17.0.0",
+  "minimum_chrome_version" : "28.0.0",
 
   "permissions": [
     "tabs",
+    "notifications",
     "*://*/*",
     "webRequestBlocking",
     "webRequest"
