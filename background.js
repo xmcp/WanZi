@@ -10,7 +10,7 @@ chrome.runtime.onInstalled.addListener(
 function push(details) {
   var tabid=details.tabId;
   if(tabid===-1) return;
-  chrome.pageAction.show(tabid);
+  setTimeout(function(){chrome.pageAction.show(tabid);},100);
 }
 
 function upload_callback(details) {
@@ -39,10 +39,12 @@ function download_callback(details) {
 }
 
 var notifed=Object();
-chrome.notifications.onButtonClicked.addListener(function(url,btnid) {
+var url_to_tabid=Object();
+var alertid=Object();
+chrome.notifications.onButtonClicked.addListener(function(uid,btnid) {
+  var url=uid.slice(0,uid.indexOf("////"));
   if(btnid===1) {
     notifed[url]=true;
-    return;
   }
   else {
     for(var noww=0;noww<blacked.length;noww++)
@@ -53,22 +55,32 @@ chrome.notifications.onButtonClicked.addListener(function(url,btnid) {
     else
       localStorage["black"]+=","+url;
     rebind();
-    chrome.tabs.reload(tabid,{bypassCache:true});
+    for(var now=0;now<url_to_tabid[url].length;now++)
+      chrome.tabs.reload(url_to_tabid[now],{bypassCache:true});
+    url_to_tabid[now]=undefined;
   }
 });
+function newalert(url) {alertid[url]++;}
 function addhost(url,displayurl,tabid) {
-  if(notifed[url])
-    return;
+  if(notifed[url]) return;
   for(var noww=0;noww<blacked.length;noww++)
       if(blacked[noww]===url)
         return;
-  var notif=chrome.notifications.create(
-    url,{
-      type:"basic",iconUrl:"icons/icon.png",isClickable:false,
-      title:"丸子",message:"在 "+displayurl+" 上应用丸子?",
-      buttons:[{title:"应用"},{title:"不再提示"}]
+  if(url_to_tabid[url]===undefined)
+    url_to_tabid[url]=[tabid];
+  else
+    url_to_tabid[url].push(tabid);
+  if(alertid[url]===undefined) alertid[url]=0;
+  chrome.notifications.create(
+    url+'////'+alertid[url].toString(),{
+      type:"basic",iconUrl:"icons/alert_icon.png",isClickable:false,
+      title:"丸子",message:"您可能需要在 "+displayurl+" 上应用丸子，是否现在应用？",
+      buttons:[{title:"立即应用",iconUrl:"icons/ok_btn.png"},{title:"暂时不再提示",iconUrl:"icons/cancel_btn.png"}]
     },function(){}
   );
+  chrome.notifications.onClicked.addListener(function(){newalert(url)});
+  chrome.notifications.onClosed.addListener(function(){newalert(url)});
+  chrome.notifications.onButtonClicked.addListener(function(){newalert(url)});
 }
 
 function bindup() {

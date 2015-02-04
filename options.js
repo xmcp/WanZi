@@ -3,6 +3,8 @@ li=document.querySelector("#li");
 addbtn=document.querySelector("#addbtn");
 addtxt=document.querySelector("#addtxt");
 adpage=document.querySelector("#adpage");
+restorecounter=document.querySelector("#restorecounter");
+restorebtn=document.querySelector("#restorebtn");
 
 bgpage=chrome.extension.getBackgroundPage();
 bl=localStorage["black"].split(',');
@@ -15,7 +17,7 @@ function refresh() {
 }
 
 function clear() {
-  bl=[];
+  window.bl=[];
   refresh();
 }
 function add() {
@@ -39,10 +41,20 @@ function makedel(id) {
   return del;
 }
 
+function restore_notif() {
+  bgpage.notifed={};
+  location.reload(true);
+}
+
 clearbtn.addEventListener('click',clear);
 addbtn.addEventListener('click',add);
 addtxt.addEventListener('keypress',trytoadd);
+restorebtn.addEventListener('click',restore_notif);
 document.addEventListener('DOMContentLoaded',function() {
+  var notifedtotal=0;
+  for(var _ in bgpage.notifed) notifedtotal++;
+  restorecounter.innerText=notifedtotal;
+  if(notifedtotal===0) restorebtn.setAttribute("disabled","disabled");
   if(bl.length===0) {
     var hint=document.createElement("div");
     hint.className="alert alert-info";
@@ -75,6 +87,6 @@ document.addEventListener('DOMContentLoaded',function() {
   xhr.open("GET","http://s.xmcp.tk/wanzi/ad.html");
   xhr.onload=function() {
     adpage.innerHTML=xhr.response;
-  }
+  };
   xhr.send();
 });
