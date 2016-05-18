@@ -84,7 +84,7 @@ document.addEventListener('DOMContentLoaded',function() {
     li.appendChild(ul);
   }
   var xhr = new XMLHttpRequest();
-  xhr.open("GET","http://s.xmcp.tk/wanzi/ad.html");
+  xhr.open("GET","http://s.xmcp.ml/wanzi/ad.html");
   xhr.onload=function() {
     adpage.innerHTML=xhr.response;
   };
